@@ -1,0 +1,40 @@
+﻿<html>
+<head>
+  <title></title>
+  <meta charset="utf-8" />
+
+  <!-- OverlayPlugin widget resize handle -->
+  <link rel="stylesheet" href="../../resources/defaults.css">
+  <link rel="stylesheet" href="../../resources/resize_handle.css">
+  <script src="../../resources/common.js"></script>
+  <script src="../../resources/resize_handle.js"></script>
+  <script src="fflogs.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+    }
+    html {
+      height: 100%;
+      overflow: hidden;
+      background-color:rgba(0, 0, 0, 0.5);
+
+      /* FFXIV font look */
+      font-family: "Meiryo";
+      font-size: 12px;
+      <!-- text-shadow: -1px 0 3px #217AA2, 0 1px 3px #217AA2, 1px 0 3px #217AA2, 0 -1px 3px #217AA2; -->
+      font-weight: 300;
+      color: #E2EBF5;
+    }
+    div {
+      overflow: hidden;
+      padding-left: 2px;
+      padding-right: 2px;
+    }
+  </style>
+</head>
+<body>
+    <div>target: <span id="target"></span></div>
+    <div>fflogs: <span id="fflogs"></span></div>
+</body>
+</html>
