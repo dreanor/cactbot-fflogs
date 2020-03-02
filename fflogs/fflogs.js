@@ -82,7 +82,6 @@ function displayInfo(playername, world) {
 
 addOverlayListener('onTargetChangedEvent', function(e) {
   document.getElementById('target').innerText = e.detail.name;
-  console.log(JSON.stringify(e));
   if(e.detail.name == null)
   {
     document.getElementById('fflogs').innerText = null;
