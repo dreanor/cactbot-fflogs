@@ -1,4 +1,7 @@
 'use strict';
+
+this.partyTracker = new PartyTracker();
+
 let apiKey="f825a9c2520b37fd37141c0ead1db332";
 let url = "https://www.fflogs.com/v1/rankings/character/";
 
@@ -45,71 +48,76 @@ function getPercentileColor(percentile){
   return "error";
 }
 
-let count = 0;
-let target;
-
-function displayInfo(playername, world) {
-  getJSON(url + playername + "/" + world + "/EU?api_key=" + apiKey,
+function getWorld(worldId){
+  if(worldId == 56)  {
+    return "Phoenix";
+  }
+  if(worldId == 66)  {
+    return "Odin";
+  }
+  if(worldId == 42)  {
+    return "Zodiark";
+  }
+  if(worldId == 33)  {
+    return "Twintania";
+  }
+  if(worldId == 67)  {
+    return "Shiva";
+  }
+}
+function displayInfo(player) {
+  console.log("Writing:" +JSON.stringify(player));
+  
+  getJSON(url + player.name + "/" + getWorld(player.worldId) + "/EU?api_key=" + apiKey,
   function(err, data)
   {
     if (err !== null)
     {
-      document.getElementById('fflogs').innerText = "No logs";
       return false;
     }
     else
     {
-      let br = "<br />";
-      document.getElementById('fflogs').innerText = null;
+            
+      let content = "<br />";
       for (let i = 0; i < data.length; i++)
       {
-        if (data[i].difficulty != 101){continue;}
-
-        let fontTag = " <b><font color='" + getPercentileColor(data[i].percentile) + "'>";
-
-        let content = br
-            + "<b>" + data[i].encounterName + "</b>" + br
-            + data[i].spec
-            +  fontTag + data[i].percentile + "</font></b>%  "
-            + "(" + data[i].rank + "/" + data[i].outOf + ") " + br;
-
-        document.getElementById('fflogs').innerHTML += content;
-        return true;
+        if (data[i].difficulty == 101) //Savage
+        {
+          let fontTag = " <b><font color='" + getPercentileColor(data[i].percentile) + "'>";
+          
+        content += "<tr><td>"+ data[i].encounterName +"</td>"
+        + "<td>"+ data[i].spec +"</td>"
+        + "<td>"+ fontTag + Math.round(data[i].percentile) + "</font>%</td>"
+        + "<td>"+ data[i].rank + "/" + data[i].outOf + "</td></tr>";
+        }
       }
+
+      let html = "<center><h2>"+ player.name + "</h2></center><hr><table>"+
+          "<thead>" +
+          "<tr>"+
+          "<th>Boss</th>"+
+          "<th>Job</th>" +
+          "<th>Percentage</th>"+
+          "<th>Rank</th>"+
+          "</tr>"+
+          "</thead>"+
+          "<tbody>"+
+          content +
+          "</tbody>"+
+          "</table>";
+      document.getElementById('fflogs').innerHTML += html;
     }
   });
 }
 
-addOverlayListener('onTargetChangedEvent', function(e) {
-  document.getElementById('target').innerText = e.detail.name;
+addOverlayListener('PartyChanged', (e) => {
+  this.partyTracker.onPartyChanged(e);
   console.log(JSON.stringify(e));
-  if(e.detail.name == null)
-  {
-    document.getElementById('fflogs').innerText = null;
-    count = 0;
-    target = e.detail.name;
-    return;
-  }
+  let players = partyTracker.details;
   
-  if (e.detail.level != 0 && (count == 0 || target != e.detail.name))
+  for (let i = 0; i < players.length; i++) 
   {
-    document.getElementById('fflogs').innerText = null;
-    
-    target = e.detail.name;
-
-    let worlds = ["Phoenix", "Lich", "Odin", "Shiva", "Zodiark"];
-    let i;
-    let result = false;
-    for (i = 0; i < worlds.length; i++) 
-    {
-      if(displayInfo(target, worlds[i]))
-      {
-        result = true;
-        break;
-      }
-    }
-    
-    count++;
+    displayInfo(players[i]);
   }
 });
 
